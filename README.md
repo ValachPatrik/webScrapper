@@ -8,6 +8,7 @@ The site adresses are then stored for future runs and to offload some of the str
 With this idea in mind the websites are also downloaded into a new folder created by the program and as long as it is present,
 there is no longer the need to access the online website and therefore all the statistical scouring is then done locally.
 ## Analysis
+by finding patterns within the HTML code the following statistics are taken out
 ### Linux only Availability
 Finds all functions that area available only on Linux systems
     :param base_url: base url of the website
