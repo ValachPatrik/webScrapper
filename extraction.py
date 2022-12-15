@@ -1,20 +1,22 @@
-import time
-from typing import NamedTuple, Optional, Dict, Tuple, List, Any
-
-import requests
-import bs4
-import os.path
-import urllib.parse
-import urllib.request
+# author: Patrik Valach
+# 2021
 
 import json
+import os.path
+import time
+import urllib.parse
+import urllib.request
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
+
+import bs4
+import requests
+
 
 class FullScrap(NamedTuple):
     linux_only_availability: List[str]
     most_visited_webpage: Tuple[int, str]
     changes: List[Tuple[int, str]]
     params: List[Tuple[int, str]]
-    tea_party: Optional[str]
 
     def as_dict(self) -> Dict[str, Any]:
         return {
@@ -22,7 +24,6 @@ class FullScrap(NamedTuple):
             'most_visited_webpage': self.most_visited_webpage,
             'changes': self.changes,
             'params': self.params,
-            'tea_party': self.tea_party
         }
 
 
@@ -87,7 +88,7 @@ def get_changes(url_all: List[str]) -> List[Tuple[int, str]]:
                 else:
                     changes[k] += 1
     changes = [(v, k[0]+'.'+k[1]) for k, v in changes.items()]
-    return sorted(changes, key=lambda x:x[0], reverse=True)
+    return sorted(changes, key=lambda x: x[0], reverse=True)
 
 
 def get_most_params(url_all: List[str]) -> List[Tuple[int, str]]:
@@ -103,13 +104,14 @@ def get_most_params(url_all: List[str]) -> List[Tuple[int, str]]:
             avail = len(j.find_all('em', class_="sig-param"))
             if avail > 10:
                 most.append((avail, j.find('dt', id=True)['id']))
-    most = sorted(most, key=lambda x:x[0], reverse=True)
+    most = sorted(most, key=lambda x: x[0], reverse=True)
     return most
 
 
 def get_soup(url):
     if os.path.exists('site\{}.html'.format(url.replace(':', '').replace('/', ''))):
-        page = open('site\{}.html'.format(url.replace(':', '').replace('/', '')), 'rb')
+        page = open('site\{}.html'.format(
+            url.replace(':', '').replace('/', '')), 'rb')
         soup = bs4.BeautifulSoup(page.read(), "html.parser")
     else:
         time.sleep(0.5)
@@ -159,7 +161,6 @@ def scrap_all(base_url: str) -> FullScrap:
         most_visited_webpage=get_most_visited_webpage(url_all),
         changes=get_changes(url_all.keys()),
         params=get_most_params(url_all.keys()),
-        tea_party=find_secret_tea_party(url_all.keys())
     )
     return scrap
 
